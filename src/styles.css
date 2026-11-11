@@ -1,0 +1,396 @@
+:root {
+    --bg: #f1f5f9;
+    --card: #fff;
+    --tx: #0f172a;
+    --mu: #64748b;
+    --br: #e2e8f0;
+    --p: #0f766e;
+    --p2: #14b8a6;
+    --bad: #dc2626;
+    --good: #15803d;
+    --sh: 0 4px 18px rgba(15, 23, 42, .07)
+}
+
+@media(prefers-color-scheme:dark) {
+    :root {
+        --bg: #0b1220;
+        --card: #111a2c;
+        --tx: #e5edf8;
+        --mu: #8b9bb4;
+        --br: #22304a;
+        --good: #4ade80;
+        --bad: #f87171;
+        --sh: 0 4px 18px rgba(0, 0, 0, .4)
+    }
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--tx)
+}
+
+.wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 12px 12px 96px
+}
+
+.top {
+    background: linear-gradient(135deg, var(--p), var(--p2));
+    color: #fff;
+    padding: 16px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--sh)
+}
+
+.top h1 {
+    margin: 0;
+    font-size: 22px
+}
+
+.top small {
+    opacity: .9
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 12px;
+    box-shadow: var(--sh)
+}
+
+.card h2 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    color: var(--p2)
+}
+
+.view {
+    animation: rise .35s cubic-bezier(.2, .8, .2, 1)
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px)
+    }
+}
+
+label {
+    font-size: 13px;
+    color: var(--mu);
+    display: block;
+    margin-top: 10px
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--br);
+    border-radius: 12px;
+    margin-top: 4px;
+    font-size: 15px;
+    background: var(--card);
+    color: var(--tx);
+    transition: border .2s, box-shadow .2s
+}
+
+input:focus,
+select:focus {
+    outline: 0;
+    border-color: var(--p2);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, .25)
+}
+
+.row {
+    display: flex;
+    gap: 8px
+}
+
+.row>* {
+    flex: 1
+}
+
+.btn {
+    background: linear-gradient(135deg, var(--p), var(--p2));
+    color: #fff;
+    border: 0;
+    padding: 13px;
+    border-radius: 12px;
+    width: 100%;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .12s, filter .2s
+}
+
+.btn:hover {
+    filter: brightness(1.07)
+}
+
+.btn:active {
+    transform: scale(.97)
+}
+
+.btn:disabled {
+    opacity: .6
+}
+
+.btn.g {
+    background: var(--br);
+    color: var(--tx)
+}
+
+.btn.a {
+    background: #f59e0b
+}
+
+.mini {
+    border: 0;
+    border-radius: 10px;
+    padding: 7px 11px;
+    cursor: pointer;
+    background: var(--br);
+    color: var(--tx);
+    font-size: 14px;
+    transition: transform .12s
+}
+
+.mini:active {
+    transform: scale(.92)
+}
+
+.mini.r {
+    background: rgba(220, 38, 38, .15)
+}
+
+.mini.gr {
+    background: rgba(21, 128, 61, .18)
+}
+
+.mini.on {
+    background: var(--p);
+    color: #fff
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px
+}
+
+.stat {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 12px;
+    border-left: 4px solid var(--c, var(--p));
+    transition: transform .2s
+}
+
+.stat:hover {
+    transform: translateY(-3px)
+}
+
+.stat span {
+    font-size: 12px;
+    color: var(--mu)
+}
+
+.stat b {
+    display: block;
+    font-size: 20px
+}
+
+.li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--br);
+    font-size: 14px;
+    animation: rise .3s both
+}
+
+.sm {
+    font-size: 12px;
+    color: var(--mu)
+}
+
+.pos {
+    color: var(--good);
+    font-weight: 700
+}
+
+.neg {
+    color: var(--bad);
+    font-weight: 700
+}
+
+.seg {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px
+}
+
+.seg .mini {
+    flex: 1;
+    padding: 10px
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px
+}
+
+th,
+td {
+    border-bottom: 1px solid var(--br);
+    padding: 7px;
+    text-align: right
+}
+
+th {
+    color: var(--mu)
+}
+
+td:first-child,
+th:first-child {
+    text-align: left
+}
+
+.nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    background: var(--card);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, .1);
+    overflow-x: auto;
+    z-index: 20
+}
+
+.nav button {
+    flex: 1 0 auto;
+    border: 0;
+    background: none;
+    color: var(--mu);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s
+}
+
+.nav button b {
+    display: block;
+    font-size: 20px
+}
+
+.nav .on {
+    background: rgba(20, 184, 166, .15);
+    color: var(--p2);
+    font-weight: 700
+}
+
+.bar {
+    transform-box: fill-box;
+    animation: grow .7s cubic-bezier(.2, .8, .2, 1) both
+}
+
+@keyframes grow {
+    from {
+        transform: scaleY(0)
+    }
+}
+
+.toast {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f766e;
+    color: #fff;
+    padding: 11px 18px;
+    border-radius: 12px;
+    z-index: 50;
+    animation: drop .3s;
+    box-shadow: var(--sh)
+}
+
+.toast.bad {
+    background: var(--bad)
+}
+
+@keyframes drop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -14px)
+    }
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+    display: grid;
+    place-items: center;
+    z-index: 40;
+    padding: 16px;
+    animation: fade .2s
+}
+
+.modal>div {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    width: 100%;
+    max-width: 380px;
+    animation: rise .25s
+}
+
+@keyframes fade {
+    from {
+        opacity: 0
+    }
+}
+
+.skel {
+    height: 90px;
+    border-radius: 16px;
+    margin-top: 12px;
+    background: linear-gradient(90deg, var(--br), var(--card), var(--br));
+    background-size: 200% 100%;
+    animation: sh 1.2s infinite
+}
+
+@keyframes sh {
+    to {
+        background-position: -200% 0
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    * {
+        animation: none !important;
+        transition: none !important
+    }
+}
