@@ -1,0 +1,24 @@
+import {useState,useEffect,useContext} from 'react'
+import {sb,Ctx,F,Badge,Empty,Stat,dt,bn,money,sum,run,toast,useForm,ROLE,device} from './lib.jsx'
+
+const TB={sales:'বিক্রি',purchases:'ক্রয়',payments:'জমা/পরিশোধ',expenses:'খরচ',parties:'পার্টি',products:'মাল'}
+const sumry=(t,x)=>t==='sales'?`#${x.no} ${x.party_name} ${money(x.total)}`:t==='purchases'?`#${x.no} ${x.party_name} ${money(x.total)}`:t==='payments'?`${money(x.amt)} ${x.note||''}`:t==='expenses'?`${x.title} ${money(x.amt)}`:x.name||''
+export default function Team({d,me}){
+  const {refresh}=useContext(Ctx),[tab,setTab]=useState('users'),[L,setL]=useState({logins:[],visits:[],act:[]}),[f,s]=useForm({shop:d.set.shop,phone:d.set.phone||'',address:d.set.address||''})
+  useEffect(()=>{if(tab==='users'||tab==='set')return
+    const q={logins:sb.from('logins').select('*').order('ts',{ascending:false}).limit(300),visits:sb.from('visits').select('*').order('ts',{ascending:false}).limit(2000),act:sb.from('activity').select('*').order('ts',{ascending:false}).limit(300)}
+    const k=tab==='log'?'logins':tab==='vis'?'visits':'act';q[k].then(r=>r.error?toast(r.error.message,1):setL(o=>({...o,[k]:r.data})))},[tab])
+  const delUser=async u=>{if(confirm(`${u.name} কে পুরোপুরি মুছে ফেলবো?\nসে আর লগইন করতে পারবে না। তার করা বিক্রির হিসাব থাকবে।`))run(sb.rpc('delete_user',{uid:u.id}),'ইউজার মুছেছে ✅',refresh)}
+  const td=new Date().toLocaleDateString('en-CA'),dayOf=t=>new Date(t).toLocaleDateString('en-CA'),week=Date.now()-7*864e5
+  const V=L.visits,vt=V.filter(v=>dayOf(v.ts)===td)
+  return <div className="view"><div className="hd"><div><h1>🔐 টিম ও নিরাপত্তা</h1><p>কে কখন ঢুকেছে, কে কী করেছে</p></div></div>
+    <div className="seg" style={{overflowX:'auto'}}>{[['users','👥 ইউজার'],['log','🔑 লগইন'],['vis','🌍 ভিজিটর'],['aud','🕵️ অডিট'],['set','⚙️ সেটিংস']].map(([k,l])=><button key={k} className={'mini '+(tab===k?'on':'')} style={{whiteSpace:'nowrap'}} onClick={()=>setTab(k)}>{l}</button>)}</div>
+    {tab==='users'&&<div className="card"><h2>ইউজার ও অনুমতি</h2><p className="sm">নতুন কেউ অ্যাকাউন্ট খুললে "অপেক্ষায়" থাকবে। এখান থেকে ভূমিকা দাও বা মুছে দাও।</p>
+      {d.users.map(u=><div className="li" key={u.id}><span><b>{u.name}</b>{u.id===me.id&&<Badge c="b">তুমি</Badge>}<br/><span className="sm">🔑 শেষ লগইন: {dt(u.last_login)} • মোট {bn(u.logins,0)} বার • যোগ: {dt(u.created_at)}</span></span>
+        <span style={{display:'flex',gap:6}}><select style={{width:'auto'}} disabled={u.id===me.id} value={u.role} onChange={e=>run(sb.from('profiles').update({role:e.target.value}).eq('id',u.id),'ভূমিকা বদলেছে ✅',refresh)}>{Object.entries(ROLE).map(([k,l])=><option key={k} value={k}>{l}</option>)}</select>{u.id!==me.id&&<button className="mini r" onClick={()=>delUser(u)}>🗑️</button>}</span></div>)}</div>}
+    {tab==='log'&&<div className="card"><h2>🔑 লগইন / লগআউট রেকর্ড</h2>{L.logins.map(x=><div className="li" key={x.id}><span><b>{x.user_name}</b> <Badge c={x.role==='super'?'b':'n'}>{ROLE[x.role]}</Badge> <Badge c={x.event==='login'?'g':'a'}>{x.event==='login'?'লগইন':'লগআউট'}</Badge><br/><span className="sm">📱 {device(x.ua)} • 🌐 IP: {x.ip||'?'}</span></span><span className="sm">{dt(x.ts)}</span></div>)}{!L.logins.length&&<Empty i="🔑" t="এখনো কোনো রেকর্ড নাই"/>}</div>}
+    {tab==='vis'&&<><div className="grid"><Stat l="আজকের ভিজিট" v={vt.length} i="👁️" c="#6366f1" n/><Stat l="আজ আলাদা ভিজিটর" v={new Set(vt.map(v=>v.sid)).size} i="🧍" c="#0ea5e9" n/><Stat l="শেষ ৭ দিনে ভিজিট" v={V.filter(v=>new Date(v.ts)>week).length} i="📅" c="#10b981" n/><Stat l="মোট আলাদা ভিজিটর" v={new Set(V.map(v=>v.sid)).size} i="🌍" c="#f59e0b" n/></div>
+      <div className="card"><h2>🌍 সাম্প্রতিক ভিজিট</h2><p className="sm">লগইন ছাড়া যে কেউ সাইট খুললেও এখানে আসে।</p>{V.slice(0,100).map(v=><div className="li" key={v.id}><span className="sm">📱 {device(v.ua)} • 🌐 {v.ip||'?'}</span><span className="sm">{dt(v.ts)}</span></div>)}{!V.length&&<Empty i="🌍" t="কোনো ভিজিট নাই"/>}</div></>}
+    {tab==='aud'&&<div className="card"><h2>🕵️ অডিট লগ (মুছা ও এডিটের রেকর্ড)</h2>{L.act.map(x=><div className="li" key={x.id}><span><b>{x.user_name||'সিস্টেম'}</b> <Badge c={x.action==='DELETE'?'r':'a'}>{x.action==='DELETE'?'মুছেছে':'এডিট করেছে'}</Badge> <Badge c="b">{TB[x.tbl]||x.tbl}</Badge><br/><span className="sm">আগের তথ্য: {sumry(x.tbl,x.detail)}</span></span><span className="sm">{dt(x.ts)}</span></div>)}{!L.act.length&&<Empty i="🕵️" t="এখনো কিছু মুছা বা এডিট হয়নি"/>}</div>}
+    {tab==='set'&&<div className="card"><h2>⚙️ দোকানের তথ্য</h2><F l="দোকানের নাম"><input {...s('shop')}/></F><F l="ফোন"><input {...s('phone')}/></F><F l="ঠিকানা"><input {...s('address')}/></F><button className="btn w" onClick={()=>f.shop.trim()?run(sb.from('settings').update({shop:f.shop.trim(),phone:f.phone||null,address:f.address||null}).eq('id',1),'সেভ হইছে ✅',refresh):toast('দোকানের নাম দাও',1)}>সেভ করো</button></div>}</div>
+}
